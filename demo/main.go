@@ -184,7 +184,7 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 	))
 
 	r.Step(demo.S(
-		"Show  a request that is valid -- contains an 'owner-team' key",
+		"Show a request that is valid -- contains an 'owner-team' key",
 	), demo.S(
 		"bat test_data/having-label-deployment.json",
 	))
@@ -238,13 +238,25 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 	))
 
 	r.Step(demo.S(
-		"Deploy an Ingress with an owner-team label",
+		"Show a Deployment with an owner-team label",
+	), demo.S(
+		"bat test_data/having-label-deployment-resource.yaml",
+	))
+
+	r.Step(demo.S(
+		"Create a Deployment with an owner-team label",
 	), demo.S(
 		"kubectl apply -f test_data/having-label-deployment-resource.yaml",
 	))
 
+	r.Step(demo.S(
+		"Show a Deployment without an owner-team label",
+	), demo.S(
+		"bat test_data/missing-label-deployment-resource.yaml",
+	))
+
 	r.StepCanFail(demo.S(
-		"Deploy an Ingress with a missing owner-team label",
+		"Try to create a Deployment with a missing owner-team label",
 	), demo.S(
 		"kubectl apply -f test_data/missing-label-deployment-resource.yaml",
 	))
