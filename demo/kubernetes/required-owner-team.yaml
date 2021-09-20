@@ -18,3 +18,9 @@ spec:
   settings:
     labels:
     - key: owner-team
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+      - kubewarden
