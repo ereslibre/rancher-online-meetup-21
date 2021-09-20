@@ -232,6 +232,12 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 	))
 
 	r.Step(demo.S(
+		"Run the policy on top of Kubernetes",
+	), demo.S(
+		"kubectl get -o wide clusteradmissionpolicy",
+	))
+
+	r.Step(demo.S(
 		"Deploy an Ingress with an owner-team label",
 	), demo.S(
 		"kubectl apply -f test_data/having-label-ingress-resource.yaml",
