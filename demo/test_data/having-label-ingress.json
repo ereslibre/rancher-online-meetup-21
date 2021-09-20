@@ -12,7 +12,7 @@
       "name": "valid-ingress",
       "namespace": "containerdays-21",
       "labels": {
-        "owner-team": "some-team@domain.com"
+        "owner-team": some-team
       }
     },
     "spec": {
