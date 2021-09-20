@@ -6,11 +6,11 @@ spec:
   module: registry://registry.ereslibre.net/kubewarden/policies/requiredlabels:latest
   rules:
   - apiGroups:
-    - networking.k8s.io
+    - apps
     apiVersions:
     - v1
     resources:
-    - ingresses
+    - deployments
     operations:
     - CREATE
     - UPDATE
