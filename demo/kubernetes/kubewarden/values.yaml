@@ -1,0 +1,4 @@
+policyServer:
+  image:
+    repository: registry.ereslibre.net/kubewarden/policy-server
+    tag: opa

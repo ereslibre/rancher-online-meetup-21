@@ -1,0 +1,18 @@
+
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: requiredlabels
+spec:
+  module: registry://registry.ereslibre.net/kubewarden/policies/requiredlabels:latest
+  rules:
+  - apiGroups: ["*"]
+    apiVersions: ["*"]
+    resources: ["*"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    labels:
+      - key: owner-team

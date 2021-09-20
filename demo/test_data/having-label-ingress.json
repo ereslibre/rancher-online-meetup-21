@@ -10,7 +10,7 @@
     "kind": "Ingress",
     "metadata": {
       "name": "valid-ingress",
-      "namespace": "oss-21",
+      "namespace": "containerdays-21",
       "labels": {
         "owner-team": "some-team@domain.com"
       }

@@ -10,7 +10,7 @@
     "kind": "Ingress",
     "metadata": {
       "name": "valid-ingress",
-      "namespace": "oss-21",
+      "namespace": "containerdays-21",
       "annotations": {
         "cert-manager.io/cluster-issuer": "letsencrypt-production"
       }
