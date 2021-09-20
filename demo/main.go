@@ -164,6 +164,9 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 		"Running a gatekeeper policy",
 	)
 
+	r.Setup(setupKubernetes)
+	r.Cleanup(cleanupKubernetes)
+
 	r.Step(demo.S(
 		"Show policy",
 	), demo.S("bat gatekeeper/requiredlabels.rego"))
@@ -208,6 +211,36 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 		`--settings-json '{"labels":[{"key":"owner-team"}]}'`,
 		"--request-path test_data/missing-label-ingress.json",
 		"gatekeeper/policy.wasm | jq",
+	))
+
+	r.Step(demo.S(
+		"Run the policy on top of Kubernetes",
+	), demo.S(
+		"bat kubernetes/required-owner-team.yaml",
+	))
+
+	r.Step(demo.S(
+		"Run the policy on top of Kubernetes",
+	), demo.S(
+		"kubectl apply -f kubernetes/required-owner-team.yaml",
+	))
+
+	r.Step(demo.S(
+		"Run the policy on top of Kubernetes",
+	), demo.S(
+		"kubectl wait --for=condition=PolicyServerWebhookConfigurationReconciled clusteradmissionpolicy required-owner-team",
+	))
+
+	r.Step(demo.S(
+		"Deploy an Ingress with an owner-team label",
+	), demo.S(
+		"kubectl apply -f test_data/having-label-ingress-resource.yaml",
+	))
+
+	r.StepCanFail(demo.S(
+		"Deploy an Ingress with a missing owner-team label",
+	), demo.S(
+		"kubectl apply -f test_data/missing-label-ingress-resource.yaml",
 	))
 
 	return r
