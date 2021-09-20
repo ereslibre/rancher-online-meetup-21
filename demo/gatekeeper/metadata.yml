@@ -1,0 +1,16 @@
+rules:
+- apiGroups: ["*"]
+  apiVersions: ["*"]
+  resources: ["*"]
+  operations: ["CREATE", "UPDATE"]
+mutating: false
+contextAware: false
+executionMode: gatekeeper
+annotations:
+  io.kubewarden.policy.author: Gatekeeper authors
+  io.kubewarden.policy.url: https://github.com/open-policy-agent/gatekeeper-library/blob/0c82f402fb3594097a90d15215ae223267f5b955/library/general/requiredlabels/template.yaml
+  io.kubewarden.policy.source: https://github.com/open-policy-agent/gatekeeper-library/blob/0c82f402fb3594097a90d15215ae223267f5b955/library/general/requiredlabels/template.yaml
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.usage: |
+    Requires all resources to contain a specified label with a value
+      matching a provided regular expression.
