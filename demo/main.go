@@ -51,7 +51,7 @@ func kwctl(r *demo.Run) {
 
 	r.Step(demo.S(
 		"Pull a policy",
-	), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
+	), demo.S("kwctl pull registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
 
 	r.Step(demo.S(
 		"List policies",
@@ -59,7 +59,7 @@ func kwctl(r *demo.Run) {
 
 	r.Step(demo.S(
 		"Inspect policy",
-	), demo.S("kwctl inspect registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
+	), demo.S("kwctl inspect registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
 
 	r.Step(demo.S(
 		"Request with a letsencrypt-production issuer",
@@ -70,7 +70,7 @@ func kwctl(r *demo.Run) {
 	), demo.S("kwctl -v run",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
 		"--request-path test_data/production-ingress.json",
-		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
+		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
 
 	r.Step(demo.S(
 		"Request with a letsencrypt-staging issuer",
@@ -81,7 +81,7 @@ func kwctl(r *demo.Run) {
 	), demo.S("kwctl -v run",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
 		"--request-path test_data/staging-ingress.json",
-		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
+		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
 }
 
 func policyServerRun() *demo.Run {
@@ -112,7 +112,7 @@ func policyServer(r *demo.Run, skipPull SkipPullOption) {
 
 		r.Step(demo.S(
 			"Pull a policy",
-		), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
+		), demo.S("kwctl pull registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
 
 		r.Step(demo.S(
 			"List policies",
@@ -124,7 +124,7 @@ func policyServer(r *demo.Run, skipPull SkipPullOption) {
 	), demo.S("kwctl manifest",
 		"--type ClusterAdmissionPolicy",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
-		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | bat --language yaml",
+		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | bat --language yaml",
 	))
 
 	r.Step(demo.S(
@@ -133,7 +133,7 @@ func policyServer(r *demo.Run, skipPull SkipPullOption) {
 		"kwctl manifest",
 		"--type ClusterAdmissionPolicy",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
-		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 |",
+		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 |",
 		"kubectl apply -f -"))
 
 	r.Step(demo.S(
