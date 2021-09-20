@@ -6,13 +6,15 @@ metadata:
 spec:
   module: registry://registry.ereslibre.net/kubewarden/policies/requiredlabels:latest
   rules:
-  - apiGroups: ["*"]
-    apiVersions: ["*"]
-    resources: ["*"]
+  - apiGroups:
+    - networking.k8s.io
+    apiVersions:
+    - v1
+    resources:
+    - Ingress
     operations:
     - CREATE
-    - UPDATE
   mutating: false
   settings:
     labels:
-      - key: owner-team
+    - key: owner-team
