@@ -6,4 +6,4 @@ policyServer:
       port: 8080
     tracing:
       jaeger:
-        endpoint: "http://all-in-one-collector.jaeger.svc.cluster.local:4317"
+        endpoint: "all-in-one-collector.jaeger.svc.cluster.local:4317"
