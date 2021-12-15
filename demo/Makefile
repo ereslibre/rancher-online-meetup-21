@@ -8,6 +8,9 @@ install:
 	helm install --wait -n kubewarden --create-namespace kubewarden-crds kubewarden/kubewarden-crds
 	helm install --wait -n kubewarden kubewarden-controller --values ../values.yaml kubewarden/kubewarden-controller
 	helm install --namespace jaeger --create-namespace jaeger-operator jaegertracing/jaeger-operator
+	helm install --namespace jaeger --create-namespace jaeger jaegertracing/jaeger
+	kubectl port-forward --address 0.0.0.0 -n prometheus svc/prometheus-grafana 8080:80 &
+	kubectl port-forward --address 0.0.0.0 -n jaeger svc/jaeger-query 3000:80 &
 
 .PHONY: kwctl
 kwctl:
