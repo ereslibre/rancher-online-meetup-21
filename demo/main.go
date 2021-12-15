@@ -246,30 +246,14 @@ func pspDisallowHostNetwork() *demo.Run {
 	), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1"))
 
 	r.Step(demo.S(
-		"Generate Kubernetes manifest",
-	), demo.S(
-		"kwctl manifest",
-		"--type ClusterAdmissionPolicy",
-		`--settings-json '{"allow_host_network": false}'`,
-		"registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1 |",
-		`yq '.metadata.name = "disallow-host-network"' |`,
-		"bat --language yaml",
-	))
-
-	r.Step(demo.S(
 		"Apply Kubernetes manifest",
 	), demo.S(
-		"kwctl manifest",
-		"--type ClusterAdmissionPolicy",
-		`--settings-json '{"allow_host_network": false}'`,
-		"registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1 |",
-		`yq '.metadata.name = "disallow-host-network"' |`,
-		"kubectl apply -f -"))
+		"kubectl apply -f test_data/host-namespaces-policy.yaml"))
 
 	r.Step(demo.S(
 		"Wait for our policy to be active",
 	), demo.S(
-		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy disallow-host-network",
+		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy disallow-host-network-except-kube-system",
 	))
 
 	return r

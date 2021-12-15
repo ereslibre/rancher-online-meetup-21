@@ -1,0 +1,19 @@
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: disallow-host-network-except-kube-system
+spec:
+  module: registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1
+  settings:
+    allow_host_network: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+  mutating: false
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values: ["kube-system"]
