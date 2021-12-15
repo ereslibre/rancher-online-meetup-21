@@ -17,6 +17,8 @@ spec:
       {{- if .Values.policyServer.telemetry.tracing.jaeger.endpoint }}
       jaeger:
         endpoint: {{ .Values.policyServer.telemetry.tracing.jaeger.endpoint }}
+        tls:
+          insecure: true
       {{- end }}
       {{- if .Values.policyServer.telemetry.metrics.port }}
       prometheus:

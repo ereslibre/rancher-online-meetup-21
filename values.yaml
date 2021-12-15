@@ -7,5 +7,3 @@ policyServer:
     tracing:
       jaeger:
         endpoint: "http://all-in-one-collector.jaeger.svc.cluster.local:4317"
-        tls:
-          insecure: true
