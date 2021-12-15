@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubewarden-controller.fullname" . }}
+  labels:
+    {{- include "kubewarden-controller.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "kubewarden-controller.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- range keys .Values.podAnnotations }}
+        {{ . | quote }}: {{ get $.Values.podAnnotations . | quote}}
+        {{- end }}
+        {{- if .Values.telemetry.enabled }}
+        "sidecar.opentelemetry.io/inject": "true"
+        {{- end }}
+      labels:
+        {{- include "kubewarden-controller.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kubewarden-controller.serviceAccountName" . }}
+      containers:
+      - name: manager
+        args:
+        - --leader-elect
+        - --deployments-namespace={{ .Release.Namespace }}
+       {{- if .Values.telemetry.enabled }}
+        - --enable-metrics
+       {{- end }}
+        command:
+        - /manager
+        {{- if .Values.telemetry.enabled }}
+        env:
+          - name: KUBEWARDEN_POLICY_SERVER_SERVICES_METRICS_PORT
+            value: "{{ .Values.policyServer.telemetry.metrics.port | default 8080 }}"
+        {{- end }}
+        image: '{{ .Values.image.repository | default "ghcr.io/kubewarden/kubewarden-controller" }}:{{ .Values.image.tag | default .Chart.AppVersion }}'
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 50Mi
+          requests:
+            cpu: 250m
+            memory: 50Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert
+      securityContext:
+        runAsNonRoot: true
+      terminationGracePeriodSeconds: 10
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

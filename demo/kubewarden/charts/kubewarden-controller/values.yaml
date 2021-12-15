@@ -1,0 +1,60 @@
+# Settings for kubewarden-controller.
+nameOverride: ""
+fullnameOverride: ""
+imagePullSecrets: []
+
+telemetry:
+  enabled: False
+image:
+  # controller image to be used. Leave empty to use
+  # ghcr.io/kubewarden/kubewarden-controller
+  repository: ""
+  # image tag, leave empty to use chart's AppVersion
+  tag: ""
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Policy Server settings
+policyServer:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/kubewarden/policy-server
+    tag: "v0.2.5"
+  serviceAccountName: policy-server
+  # All permissions are cluster-wide. Even namespaced resources are
+  # granted access in all namespaces at this time.
+  permissions:
+    - apiGroup: ""
+      resources:
+        - namespaces
+        - services
+    - apiGroup: "networking.k8s.io"
+      resources:
+        - ingresses
+  telemetry:
+    metrics:
+      port: 8080
+    tracing:
+      jaeger:
+        {}
+        # Jaeger endpoint to send traces to
+        # endpoint: "all-in-one-collector.jaeger.svc.cluster.local:14250"
+  env:
+    - name: KUBEWARDEN_LOG_LEVEL
+      value: info
+  annotations: {}
+
+tls:
+  # source options:
+  # - "cert-manager-self-signed": Scaffold cert-manager integration, and create
+  #   a self-signed certificate with a cert-manager self-signed Issuer. Depends
+  #   on cert-manager. (default)
+  # - "cert-manager": Scafffold cert-manager integration. User configures their
+  #   own Issuer. Depends on cert-manager. Set tls.certManagerIssuerName to the
+  #   desired Issuer.
+  source: cert-manager-self-signed
+  # "cert-manager"-only options:
+  certManagerIssuerName: ""

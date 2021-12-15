@@ -8,8 +8,8 @@ install:
 	helm install --wait --create-namespace --namespace prometheus --values ../kube-prometheus-values.yaml prometheus prometheus-community/kube-prometheus-stack
 	kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 	kubectl wait --for=condition=Available deployment --timeout=2m -n opentelemetry-operator-system --all
-	helm install --wait -n kubewarden --create-namespace kubewarden-crds kubewarden/kubewarden-crds
-	helm install --wait -n kubewarden kubewarden-controller --values ../values.yaml kubewarden/kubewarden-controller
+	helm install --wait -n kubewarden --create-namespace kubewarden-crds kubewarden/charts/kubewarden/kubewarden-crds
+	helm install --wait -n kubewarden kubewarden-controller --values ../values.yaml kubewarden/charts/kubewarden/kubewarden-controller
 	kubectl port-forward --address 0.0.0.0 -n prometheus svc/prometheus-grafana 8080:80 &
 	kubectl port-forward --address 0.0.0.0 -n jaeger svc/all-in-one-query 16686:16686 &
 
