@@ -1,0 +1,9 @@
+telemetry:
+  enabled: True
+policyServer:
+  telemetry:
+    metrics:
+      port: 8080
+    tracing:
+      jaeger:
+        endpoint: "all-in-one-collector.jaeger.svc.cluster.local:14250"
