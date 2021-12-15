@@ -10,9 +10,10 @@ import (
 
 func main() {
 	d := demo.New()
-	d.Add(kwctlRun(), "kwctl demo", "kwctl")
-	d.Add(policyServerRun(), "policy-server demo", "policy-server")
-	d.Add(gatekeeperPolicyBuildAndRun(), "gatekeeper policy build and run demo", "gatekeeper")
+	d.Add(kwctlRun(), "kwctl", "kwctl")
+	d.Add(policyServerRun(), "policy-server", "policy-server")
+	d.Add(gatekeeperPolicyBuildAndRun(), "gatekeeper", "gatekeeper")
+	d.Add(pspDisallowHostNetwork(), "psp-disallow-host-network", "psp-disallow-host-network")
 	d.Run()
 }
 
@@ -227,6 +228,48 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 		"Try to create a Deployment with a missing owner-team label",
 	), demo.S(
 		"kubectl apply -f test_data/missing-label-deployment-resource.yaml",
+	))
+
+	return r
+}
+
+func pspDisallowHostNetwork() *demo.Run {
+	r := demo.NewRun(
+		"Running a Pod Security Policy replacement",
+	)
+
+	r.Setup(setupKubernetes)
+	r.Cleanup(cleanupKubernetes)
+
+	r.Step(demo.S(
+		"Pull a policy",
+	), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1"))
+
+	r.Step(demo.S(
+		"Generate Kubernetes manifest",
+	), demo.S(
+		"kwctl manifest",
+		"--type ClusterAdmissionPolicy",
+		`--settings-json '{"allow_host_network": false}'`,
+		"registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1 |",
+		`yq '.metadata.name = "disallow-host-network"' |`,
+		"bat --language yaml",
+	))
+
+	r.Step(demo.S(
+		"Apply Kubernetes manifest",
+	), demo.S(
+		"kwctl manifest",
+		"--type ClusterAdmissionPolicy",
+		`--settings-json '{"allow_host_network": false}'`,
+		"registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.1 |",
+		`yq '.metadata.name = "disallow-host-network"' |`,
+		"kubectl apply -f -"))
+
+	r.Step(demo.S(
+		"Wait for our policy to be active",
+	), demo.S(
+		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy disallow-host-network",
 	))
 
 	return r
