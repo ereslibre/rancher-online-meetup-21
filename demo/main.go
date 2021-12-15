@@ -55,7 +55,7 @@ func kwctl(r *demo.Run) {
 	), demo.S("kwctl -v run",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
 		"--request-path test_data/production-ingress.json",
-		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
+		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
 
 	r.Step(demo.S(
 		"Request with a letsencrypt-staging issuer",
@@ -66,7 +66,7 @@ func kwctl(r *demo.Run) {
 	), demo.S("kwctl -v run",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
 		"--request-path test_data/staging-ingress.json",
-		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
+		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | jq"))
 }
 
 func policyServerRun() *demo.Run {
@@ -77,39 +77,22 @@ func policyServerRun() *demo.Run {
 	r.Setup(setupKubernetes)
 	r.Cleanup(cleanupKubernetes)
 
-	policyServer(r, NoSkipPull)
+	policyServer(r)
 
 	return r
 }
 
-type SkipPullOption int
-
-const (
-	NoSkipPull = iota
-	SkipPull
-)
-
-func policyServer(r *demo.Run, skipPull SkipPullOption) {
-	if skipPull == NoSkipPull {
-		r.Step(demo.S(
-			"List policies",
-		), demo.S("kwctl policies"))
-
-		r.Step(demo.S(
-			"Pull a policy",
-		), demo.S("kwctl pull registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
-
-		r.Step(demo.S(
-			"List policies",
-		), demo.S("kwctl policies"))
-	}
+func policyServer(r *demo.Run) {
+	r.Step(demo.S(
+		"Pull a policy",
+	), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
 
 	r.Step(demo.S(
 		"Generate Kubernetes manifest",
 	), demo.S("kwctl manifest",
 		"--type ClusterAdmissionPolicy",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
-		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 | bat --language yaml",
+		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 | bat --language yaml",
 	))
 
 	r.Step(demo.S(
@@ -118,13 +101,13 @@ func policyServer(r *demo.Run, skipPull SkipPullOption) {
 		"kwctl manifest",
 		"--type ClusterAdmissionPolicy",
 		`--settings-json '{"constrained_annotations": {"cert-manager.io/cluster-issuer": "letsencrypt-production"}}'`,
-		"registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0 |",
+		"registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0 |",
 		"kubectl apply -f -"))
 
 	r.Step(demo.S(
 		"Wait for our policy to be active",
 	), demo.S(
-		"kubectl wait --for=condition=PolicyServerWebhookConfigurationReconciled clusteradmissionpolicy generated-policy",
+		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy generated-policy",
 	))
 
 	r.Step(demo.S(
@@ -213,7 +196,7 @@ func gatekeeperPolicyBuildAndRun() *demo.Run {
 	r.Step(demo.S(
 		"Run the policy on top of Kubernetes",
 	), demo.S(
-		"kubectl wait --for=condition=PolicyServerWebhookConfigurationReconciled clusteradmissionpolicy required-owner-team",
+		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy required-owner-team",
 	))
 
 	r.Step(demo.S(
