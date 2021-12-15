@@ -10,7 +10,7 @@
     "kind": "Ingress",
     "metadata": {
       "name": "valid-ingress",
-      "namespace": "containerdays-21",
+      "namespace": "rancher-online-meetup-21",
       "labels": {
         "owner-team": "some-team"
       }

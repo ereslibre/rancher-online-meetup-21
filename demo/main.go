@@ -10,25 +10,10 @@ import (
 
 func main() {
 	d := demo.New()
-	d.Add(containerDays21Run(), "containerdays 21 demo", "containerdays 21 demo")
-	d.Add(kwctlRun(), "kwctl demo", "kwctl demo")
-	d.Add(policyServerRun(), "policy-server demo", "policy-server demo")
-	d.Add(gatekeeperPolicyBuildAndRun(), "gatekeeper policy build and run demo", "gatekeeper policy build and run demo")
+	d.Add(kwctlRun(), "kwctl demo", "kwctl")
+	d.Add(policyServerRun(), "policy-server demo", "policy-server")
+	d.Add(gatekeeperPolicyBuildAndRun(), "gatekeeper policy build and run demo", "gatekeeper")
 	d.Run()
-}
-
-func containerDays21Run() *demo.Run {
-	r := demo.NewRun(
-		"Running policies with kwctl and policy-server",
-	)
-
-	r.Setup(setupKubernetes)
-	r.Cleanup(cleanupKubernetes)
-
-	kwctl(r)
-	policyServer(r, SkipPull)
-
-	return r
 }
 
 func kwctlRun() *demo.Run {
@@ -51,7 +36,7 @@ func kwctl(r *demo.Run) {
 
 	r.Step(demo.S(
 		"Pull a policy",
-	), demo.S("kwctl pull registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
+	), demo.S("kwctl pull registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
 
 	r.Step(demo.S(
 		"List policies",
@@ -59,7 +44,7 @@ func kwctl(r *demo.Run) {
 
 	r.Step(demo.S(
 		"Inspect policy",
-	), demo.S("kwctl inspect registry://registry.ereslibre.net/kubewarden/policies/safe-annotations:v0.1.0"))
+	), demo.S("kwctl inspect registry://ghcr.io/kubewarden/policies/safe-annotations:v0.1.0"))
 
 	r.Step(demo.S(
 		"Request with a letsencrypt-production issuer",
@@ -272,14 +257,14 @@ func cleanupKwctl() error {
 func setupKubernetes() error {
 	cleanupKwctl()
 	cleanupKubernetes()
-	exec.Command("kubectl", "create", "namespace", "containerdays-21").Run()
+	exec.Command("kubectl", "create", "namespace", "rancher-online-meetup-21").Run()
 	exec.Command("kubectl", "delete", "clusteradmissionpolicy", "--all").Run()
 	return nil
 }
 
 func cleanupKubernetes() error {
 	cleanupKwctl()
-	exec.Command("kubectl", "delete", "namespace", "containerdays-21").Run()
+	exec.Command("kubectl", "delete", "namespace", "rancher-online-meetup-21").Run()
 	exec.Command("kubectl", "delete", "clusteradmissionpolicy", "--all").Run()
 	return nil
 }

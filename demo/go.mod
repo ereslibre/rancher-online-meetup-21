@@ -1,4 +1,4 @@
-module github.com/ereslibre/containerdays-21
+module github.com/ereslibre/rancher-online-meetup-21
 
 go 1.16
 

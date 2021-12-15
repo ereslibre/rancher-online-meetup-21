@@ -10,7 +10,7 @@
     "kind": "Deployment",
     "metadata": {
       "name": "valid-deployment",
-      "namespace": "containerdays-21",
+      "namespace": "rancher-online-meetup-21",
       "labels": {
         "app": "nginx",
         "owner-team": "some-team"

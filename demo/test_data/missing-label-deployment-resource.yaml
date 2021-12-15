@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: invalid-deployment
-  namespace: containerdays-21
+  namespace: rancher-online-meetup-21
   labels:
     app: nginx
 spec:

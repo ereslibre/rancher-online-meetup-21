@@ -10,7 +10,7 @@
     "kind": "Ingress",
     "metadata": {
       "name": "invalid-ingress",
-      "namespace": "containerdays-21",
+      "namespace": "rancher-online-meetup-21",
       "annotations": {
         "cert-manager.io/cluster-issuer": "letsencrypt-staging"
       }
