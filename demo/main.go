@@ -256,6 +256,30 @@ func pspDisallowHostNetwork() *demo.Run {
 		"kubectl wait --for=condition=PolicyActive clusteradmissionpolicy disallow-host-network-except-kube-system",
 	))
 
+	r.Step(demo.S(
+		"Show a pod with hostNetwork: true in the default namespace",
+	), demo.S(
+		"bat test_data/host-network-pod.yaml",
+	))
+
+	r.StepCanFail(demo.S(
+		"Try to create a pod with hostNetwork: true in the default namespace",
+	), demo.S(
+		"kubectl apply -f test_data/host-network-pod.yaml",
+	))
+
+	r.Step(demo.S(
+		"Show a pod with hostNetwork: true in the kube-system namespace",
+	), demo.S(
+		"bat test_data/host-network-pod-kube-system.yaml",
+	))
+
+	r.Step(demo.S(
+		"Try to create a pod with hostNetwork: true in the kube-system namespace",
+	), demo.S(
+		"kubectl apply -f test_data/host-network-pod-kube-system.yaml",
+	))
+
 	return r
 }
 
